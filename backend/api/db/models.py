@@ -3,7 +3,7 @@ from sqlalchemy import BigInteger, String, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
-from backend.api.db.database import Base
+from api.db.database import Base
 
 
 class Task(Base):

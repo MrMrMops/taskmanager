@@ -1,8 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel, Field, HttpUrl, UUID4, constr
 
-class Task(BaseModel):
-    id: UUID4
+class TaskCreate(BaseModel):
     title: constr(min_length=1, max_length=255) = Field(..., description="Title of the task")
     text: str | None = Field(None, description="Detailed description of the task")
     image_url: HttpUrl | None = Field(None, description="URL of the task's related image")
@@ -17,6 +16,8 @@ class Task(BaseModel):
         le=5,
         description="Priority of the task (1-5, where 1 is highest priority)"
     )
+class Task(TaskCreate):
+    id: UUID4
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Timestamp when the task was created")
     updated_at: datetime | None = Field(None, description="Timestamp when the task was last updated")
 
