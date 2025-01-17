@@ -14,23 +14,40 @@ class TaskCreate(BaseModel):
         1,
         ge=1,
         le=5,
-        description="Priority of the task (1-5, where 1 is highest priority)"
+        description="Priority of the task (1-5, where 1 is highest priority)",
     )
+class TaskUpdate(BaseModel):
+    """
+    Схема для частичного обновления задачи.
+    Все поля являются необязательными.
+    """
+    title: str | None = None
+    text: str | None = None
+    image_url: str | None = None
+    due_date: datetime | None = None
+    priority: int | None = None
+
 class Task(TaskCreate):
-    id: UUID4
-    created_at: datetime = Field(default_factory=datetime.utcnow, description="Timestamp when the task was created")
-    updated_at: datetime | None = Field(None, description="Timestamp when the task was last updated")
+    id: int
+    created_date: datetime = Field(
+        default_factory=datetime.now,
+        description="Timestamp when the task was created"
+    )
+    updated_date: datetime = Field(
+        default_factory=datetime.now,
+        description="Timestamp when the task was last updated"
+    )
 
     class Config:
         schema_extra = {
             "example": {
+                "id": "e8f45b14-1a2b-4a4f-8333-9dbe01c55ff6",
                 "title": "Complete project documentation",
                 "text": "Document all APIs before the deadline",
                 "image_url": "https://example.com/image.png",
                 "due_date": "2025-01-20T15:00:00",
                 "priority": 2,
-                "created_at": "2025-01-01T10:00:00"
+                "created_at": "2025-01-01T10:00:00",
+                "updated_at": "2025-01-05T10:00:00"
             }
         }
-
-

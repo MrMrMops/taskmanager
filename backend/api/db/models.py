@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from sqlalchemy import BigInteger, String, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
@@ -13,7 +14,7 @@ class Task(Base):
     __tablename__ = "tasks"
 
     id: Mapped[int] = mapped_column(
-        BigInteger, primary_key=True, autoincrement=True, index=True, doc="Уникальный идентификатор задачи."
+        BigInteger, primary_key=True,autoincrement=True, index=True, doc="Уникальный идентификатор задачи."
     )
     title: Mapped[str] = mapped_column(
         String(255), nullable=False, doc="Краткое название задачи (максимум 255 символов)."
@@ -31,10 +32,10 @@ class Task(Base):
         nullable=True, index=True, doc="Дата завершения задачи. Может быть пустой."
     )
     created_date: Mapped[datetime] = mapped_column(
-        default=func.utcnow(), nullable=False, doc="Дата создания задачи. Устанавливается автоматически."
+        default=datetime.now(), nullable=False, doc="Дата создания задачи. Устанавливается автоматически."
     )
     updated_date: Mapped[datetime] = mapped_column(
-        default=func.utcnow(), onupdate=func.utcnow(), nullable=False,
+        default=datetime.now(), onupdate=datetime.now(), nullable=False,
         doc="Дата последнего обновления задачи. Обновляется автоматически."
     )
 
