@@ -9,10 +9,12 @@ from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from api.db.database import get_async_session
-from api.db.models import Task
+from api.db.models import Task, User
 from api.schemas.tasks_schemas import TaskCreate, TaskUpdate
 from api.schemas.tasks_schemas import Task as task
 from starlette import status
+from .utils import get_current_user
+
 
 tasks_router = APIRouter(
     prefix="/task",
@@ -22,7 +24,7 @@ tasks_router = APIRouter(
 logger = logging.getLogger(__name__)
 
 @tasks_router.get("/list", response_model=list[task])
-async def tasks_list(session: AsyncSession = Depends(get_async_session)):
+async def tasks_list(session: AsyncSession = Depends(get_async_session),user: User = Depends(get_current_user)):
     result = await session.execute(select(Task))
     task_list = result.scalars().all()
     return task_list
@@ -31,10 +33,10 @@ async def tasks_list(session: AsyncSession = Depends(get_async_session)):
 async def task_create(
     task: TaskCreate,
     session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(get_current_user)
 ):
-    """
-    Создает новую задачу.
-    """
+
+
 # Создание объекта задачи
     new_task = Task(
         title=task.title,
@@ -88,16 +90,6 @@ async def delete_task(
     task_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """
-    Удаляет задачу по её ID.
-
-    Args:
-        task_id (UUID): Уникальный идентификатор задачи.
-        session (AsyncSession): Асинхронная сессия базы данных.
-
-    Returns:
-        dict: Сообщение об успешном удалении.
-    """
     try:
         # Проверка существования задачи
         query = select(Task).where(Task.id == task_id)

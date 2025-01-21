@@ -59,11 +59,12 @@ class User(Base):
         String(100), nullable=False, doc="Имя пользователя. Максимум 100 символов."
     )
     email: Mapped[str] = mapped_column(
-        String(255), nullable=False, unique=True, doc="Email пользователя. Должен быть уникальным."
+        String(255), nullable=True, unique=True, doc="Email пользователя. Должен быть уникальным."
     )
     created_date: Mapped[datetime] = mapped_column(
-        default=func.utcnow(), nullable=False, doc="Дата создания аккаунта. Устанавливается автоматически."
+        default=datetime.now(), nullable=False, doc="Дата создания аккаунта. Устанавливается автоматически."
     )
+    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
 
     def __repr__(self) -> str:
         """

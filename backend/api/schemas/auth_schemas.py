@@ -9,10 +9,10 @@ class UserCreate(BaseModel):
         max_length=128,
         description="Password for the user (8-128 characters)"
     )
-
+    email: str | None = None
 class UserDB(UserCreate):
-    id: UUID4
-    created_at: datetime = Field(default_factory=datetime.utcnow, description="User creation timestamp")
+    id: int
+    created_at: datetime = Field(default_factory=datetime.now, description="User creation timestamp")
 
     class Config:
         orm_mode = True
@@ -26,3 +26,20 @@ class TokenSchema(BaseModel):
 class TokenPayload(BaseModel):
     sub: str = Field(..., description="Subject (user ID)")
     exp: int = Field(..., description="Expiration timestamp of the token")
+
+class UserOut(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
+class UserOutList(BaseModel):
+    id: int
+    name: str
+    email: str | None = None
+    hashed_password: str
+
+    class Config:
+        orm_mode = True
