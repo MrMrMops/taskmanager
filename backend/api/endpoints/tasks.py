@@ -24,7 +24,7 @@ tasks_router = APIRouter(
 logger = logging.getLogger(__name__)
 
 @tasks_router.get("/list", response_model=list[task])
-async def tasks_list(session: AsyncSession = Depends(get_async_session),user: User = Depends(get_current_user)):
+async def tasks_list(session: AsyncSession = Depends(get_async_session)):#,user: User = Depends(get_current_user)):
     result = await session.execute(select(Task))
     task_list = result.scalars().all()
     return task_list

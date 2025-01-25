@@ -5,6 +5,8 @@ from sqlalchemy.future import select
 from api.db.database import get_async_session
 from api.db.models import User
 from api.schemas.auth_schemas import UserCreate, UserOut, UserDB,UserOutList
+from starlette import status
+
 from .utils import get_password_hash, verify_password, create_access_token
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -35,7 +37,6 @@ async def register_user(user: UserCreate, session: AsyncSession = Depends(get_as
     return new_user
 
 
-
 @auth_router.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: AsyncSession = Depends(get_async_session)):
     query = select(User).where(User.name == form_data.username)
@@ -46,3 +47,27 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Async
 
     access_token = create_access_token(data={"sub": user.name})
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+
+@auth_router.delete("/delete_user/{user_id}", status_code=status.HTTP_200_OK)
+async def delete_user(
+    user_id: int,
+    session: AsyncSession = Depends(get_async_session),
+):
+
+        # Проверка существования задачи
+        query = select(User).where(User.id == user_id)
+        result = await session.execute(query)
+        task = result.scalar_one_or_none()
+
+        if task is None:
+            # logger.warning(f"Task with ID {task_id} not found.")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Task with ID {user_id} not found.",
+            )
+        await session.delete(task)
+        await session.commit()
+        # logger.info(f"Task {task_id} deleted successfully.")
+        return {"message": f"Task {user_id} deleted successfully."}
