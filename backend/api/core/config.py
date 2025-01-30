@@ -1,6 +1,15 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
+
+    CELERY_BROKER_URL: str = "redis://localhost:6379/0"
+    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/0"
+    REDIS_URL: str = "redis://localhost:6379/0"
+    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    SMTP_USER: str
+    SMTP_PASSWORD: str
+
     DB_HOST: str
     DB_PORT: str
     DB_USER: str

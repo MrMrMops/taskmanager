@@ -62,7 +62,6 @@ async def delete_user(
         task = result.scalar_one_or_none()
 
         if task is None:
-            # logger.warning(f"Task with ID {task_id} not found.")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Task with ID {user_id} not found.",

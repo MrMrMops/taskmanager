@@ -11,7 +11,7 @@ class TaskCreate(BaseModel):
         example="2025-01-20T15:00:00"
     )
     priority: int = Field(
-        1,
+        None,
         ge=1,
         le=5,
         description="Priority of the task (1-5, where 1 is highest priority)",
