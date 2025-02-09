@@ -1,6 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel, Field, HttpUrl, UUID4, constr
 
+
 class UserCreate(BaseModel):
     name: constr(min_length=3, max_length=50) = Field(..., description="Name of the user")
     password: str = Field(
@@ -10,6 +11,8 @@ class UserCreate(BaseModel):
         description="Password for the user (8-128 characters)"
     )
     email: str | None = None
+
+
 class UserDB(UserCreate):
     id: int
     created_at: datetime = Field(default_factory=datetime.now, description="User creation timestamp")
@@ -26,6 +29,7 @@ class TokenSchema(BaseModel):
 class TokenPayload(BaseModel):
     sub: str = Field(..., description="Subject (user ID)")
     exp: int = Field(..., description="Expiration timestamp of the token")
+
 
 class UserOut(BaseModel):
     id: int

@@ -22,7 +22,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root  # Укажите пароль
+      POSTGRES_PASSWORD: root
       POSTGRES_DB: localhost
     ports:
       - "5432:5432"

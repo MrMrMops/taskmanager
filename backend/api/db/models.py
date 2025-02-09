@@ -1,16 +1,11 @@
-import uuid
 from datetime import datetime
 from sqlalchemy import BigInteger, String, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
-
 from api.db.database import Base
 
 
 class Task(Base):
-    """
-    Модель для хранения информации о задачах.
-    """
     __tablename__ = "tasks"
 
     id: Mapped[int] = mapped_column(
@@ -40,16 +35,12 @@ class Task(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        Возвращает строковое представление объекта для отладки.
-        """
+
         return f"<Task(id={self.id}, title={self.title}, priority={self.priority})>"
 
 
 class User(Base):
-    """
-    Модель для хранения данных пользователей.
-    """
+
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(
@@ -67,7 +58,5 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
 
     def __repr__(self) -> str:
-        """
-        Строковое представление объекта для отладки.
-        """
+
         return f"<User(id={self.id}, name={self.name}, email={self.email})>"

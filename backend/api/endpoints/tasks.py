@@ -1,10 +1,7 @@
 import logging
-import uuid
 from datetime import datetime
 from typing import Dict, Any
-
-from fastapi import FastAPI, APIRouter, Depends, HTTPException
-from pydantic import HttpUrl
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,29 +12,26 @@ from api.schemas.tasks_schemas import Task as task
 from starlette import status
 from .utils import get_current_user
 
-
 tasks_router = APIRouter(
     prefix="/task",
-    tags=["tasks",'task']
+    tags=["tasks", 'task']
 )
-
 logger = logging.getLogger(__name__)
 
+
 @tasks_router.get("/list", response_model=list[task])
-async def tasks_list(session: AsyncSession = Depends(get_async_session)):#,user: User = Depends(get_current_user)):
+async def tasks_list(session: AsyncSession = Depends(get_async_session)):
     result = await session.execute(select(Task))
     task_list = result.scalars().all()
     return task_list
 
+
 @tasks_router.post("/create_task", status_code=status.HTTP_201_CREATED)
 async def task_create(
-    task: TaskCreate,
-    session: AsyncSession = Depends(get_async_session),
-    user: User = Depends(get_current_user)
+        task: TaskCreate,
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(get_current_user)
 ):
-
-
-# Создание объекта задачи
     new_task = Task(
         title=task.title,
         text=task.text,
@@ -74,7 +68,6 @@ async def task_create(
             detail="Unexpected error occurred. Please contact support.",
         )
 
-    # Возвращение успешного ответа
     return {
         "message": "Task created successfully",
         "task": {
@@ -85,13 +78,14 @@ async def task_create(
             "updated_date": new_task.updated_date,
         },
     }
+
+
 @tasks_router.delete("/delete_task/{task_id}", status_code=status.HTTP_200_OK)
 async def delete_task(
-    task_id: int,
-    session: AsyncSession = Depends(get_async_session),
+        task_id: int,
+        session: AsyncSession = Depends(get_async_session),
 ):
     try:
-        # Проверка существования задачи
         query = select(Task).where(Task.id == task_id)
         result = await session.execute(query)
         task = result.scalar_one_or_none()
@@ -103,7 +97,6 @@ async def delete_task(
                 detail=f"Task with ID {task_id} not found.",
             )
 
-        # Удаление задачи
         await session.delete(task)
         await session.commit()
         logger.info(f"Task {task_id} deleted successfully.")
@@ -124,13 +117,13 @@ async def delete_task(
             detail="Unexpected error occurred. Please contact support.",
         )
 
+
 @tasks_router.put("/update_task/{task_id}", status_code=status.HTTP_200_OK)
 async def update_task(
-        task_id:int,
+        task_id: int,
         task_update: TaskUpdate,
         session: AsyncSession = Depends(get_async_session),
 ):
-
     try:
         query = select(Task).where(Task.id == task_id)
         result = await session.execute(query)
@@ -144,15 +137,12 @@ async def update_task(
                 detail=f"Task with ID {task_id} not found.",
             )
 
-        # Применение изменений
         update_data: Dict[str, Any] = task_update.dict(exclude_unset=True)
         for field, value in update_data.items():
             setattr(task, field, value)
 
-        # Обновление времени изменения
         task.updated_date = datetime.utcnow()
 
-        # Сохранение изменений
         await session.commit()
         await session.refresh(task)
         logger.info(f"Task {task_id} updated successfully.")

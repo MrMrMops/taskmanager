@@ -1,6 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel, Field, HttpUrl, UUID4, constr
 
+
 class TaskCreate(BaseModel):
     title: constr(min_length=1, max_length=255) = Field(..., description="Title of the task")
     text: str | None = Field(None, description="Detailed description of the task")
@@ -16,16 +17,15 @@ class TaskCreate(BaseModel):
         le=5,
         description="Priority of the task (1-5, where 1 is highest priority)",
     )
+
+
 class TaskUpdate(BaseModel):
-    """
-    Схема для частичного обновления задачи.
-    Все поля являются необязательными.
-    """
     title: str | None = None
     text: str | None = None
     image_url: str | None = None
     due_date: datetime | None = None
     priority: int | None = None
+
 
 class Task(TaskCreate):
     id: int

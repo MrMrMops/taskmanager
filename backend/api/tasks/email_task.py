@@ -5,11 +5,10 @@ from api.core.config import settings
 from api.core.celery_app import celery_app
 from celery import shared_task
 
+
 @celery_app.task
 def send_email_task(subject: str, body: str, recipient: str):
-    """
-    Синхронная задача Celery для отправки email.
-    """
+
     email = EmailMessage()
     email["From"] = settings.SMTP_USER
     email["To"] = recipient

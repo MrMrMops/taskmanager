@@ -3,12 +3,12 @@ from api.core.config import settings  # Импортируйте ваши нас
 
 celery_app = Celery(
     "taskmanager",
-    broker=settings.CELERY_BROKER_URL,  # Пример: "redis://localhost:6379/0"
-    backend=settings.CELERY_RESULT_BACKEND,  # Пример: "redis://localhost:6379/0"
-    include=["api.tasks.email_task"],  # Укажите путь к модулю с задачами
+    broker=settings.CELERY_BROKER_URL,
+    backend=settings.CELERY_RESULT_BACKEND,
+    include=["api.tasks.email_task"],
 )
 
-# Настройки Celery
+
 celery_app.conf.update(
     task_serializer="json",
     result_serializer="json",

@@ -1,11 +1,10 @@
-import logging
-
 import pytest
+
 
 @pytest.mark.asyncio
 async def test_register_user_successfully(client, user_data):
 
-    response =await client.post("/auth/register", json=user_data)
+    response = await client.post("/auth/register", json=user_data)
     id_user = response.json()['id']
 
     assert response.status_code == 200
@@ -13,12 +12,10 @@ async def test_register_user_successfully(client, user_data):
     response = await client.delete(f"/auth/delete_user/{id_user}")
     assert response.status_code == 200
 
-    # assert "access_token" in data
 
 @pytest.mark.asyncio
-async def test_login_user(client,log_data):
+async def test_login_user(client, log_data):
 
-    # Отправка данных в формате form-data
     response = await client.post("/auth/login", data=log_data)
 
     assert response.status_code == 200
@@ -32,15 +29,15 @@ async def test_login_user_with_invalid_credentials(client,):
         "password": "strongpassword123"
     }
 
-    # Отправка данных в формате form-data
     response = await client.post("/auth/login", data=user_data)
 
     assert response.status_code == 401
     assert response.json()['detail'] == "Invalid username or password"
 
+
 @pytest.mark.asyncio
 async def test_delete_user404(client):
-    INVALID_USER_ID = -1
-    response = await client.delete(f"/auth/delete_user/{INVALID_USER_ID}")
+    invalid_user_id = -1
+    response = await client.delete(f"/auth/delete_user/{invalid_user_id}")
     assert response.status_code == 404
-    assert response.json()['detail'] == f"Task with ID {INVALID_USER_ID} not found."
+    assert response.json()['detail'] == f"Task with ID {invalid_user_id} not found."
